@@ -10,6 +10,12 @@ const EventChannel _userAccelerometerEventChannel =
 const EventChannel _gyroscopeEventChannel =
     const EventChannel('plugins.flutter.io/sensors/gyroscope');
 
+const EventChannel _magneticFieldEventChannel =
+    const EventChannel('plugins.flutter.io/sensors/magnetic_field');
+
+const EventChannel _ambientTemperatureEventChannel =
+    const EventChannel('plugins.flutter.io/sensors/ambient_temperature');
+
 class AccelerometerEvent {
   /// Acceleration force along the x axis (including gravity) measured in m/s^2.
   final double x;
@@ -58,6 +64,32 @@ class UserAccelerometerEvent {
   String toString() => '[UserAccelerometerEvent (x: $x, y: $y, z: $z)]';
 }
 
+class MagneticFieldEvent {
+  /// Geomagnetic field strength along the x axis measured in μT.
+  final double x;
+
+  /// Geomagnetic field strength along the y axis measured in μT.
+  final double y;
+
+  /// Geomagnetic field strength along the z axis measured in μT.
+  final double z;
+
+  MagneticFieldEvent(this.x, this.y, this.z);
+
+  @override
+  String toString() => '[MagneticFieldEvent (x: $x, y: $y, z: $z)]';
+}
+
+class AmbientTemperatureEvent {
+  /// Measures the ambient room temperature in degrees Celsius (°C).
+  final double t;
+
+  AmbientTemperatureEvent(this.t);
+
+  @override
+  String toString() => '[AmbientTemperatureEvent (t: $t)]';
+}
+
 AccelerometerEvent _listToAccelerometerEvent(List<double> list) {
   return new AccelerometerEvent(list[0], list[1], list[2]);
 }
@@ -70,9 +102,19 @@ GyroscopeEvent _listToGyroscopeEvent(List<double> list) {
   return new GyroscopeEvent(list[0], list[1], list[2]);
 }
 
+MagneticFieldEvent _listToMagneticFieldEvent(List<double> list) {
+  return new MagneticFieldEvent(list[0], list[1], list[2]);
+}
+
+AmbientTemperatureEvent _listToAmbientTemperatureEvent(List<double> list) {
+  return new AmbientTemperatureEvent(list[0]);
+}
+
 Stream<AccelerometerEvent> _accelerometerEvents;
 Stream<GyroscopeEvent> _gyroscopeEvents;
 Stream<UserAccelerometerEvent> _userAccelerometerEvents;
+Stream<MagneticFieldEvent> _magneticFieldEvents;
+Stream<AmbientTemperatureEvent> _ambientTemperatureEvents;
 
 /// A broadcast stream of events from the device accelerometer.
 Stream<AccelerometerEvent> get accelerometerEvents {
@@ -105,3 +147,27 @@ Stream<UserAccelerometerEvent> get userAccelerometerEvents {
   }
   return _userAccelerometerEvents;
 }
+
+/// A broadcast stream of events from the device magnetic_field.
+Stream<MagneticFieldEvent> get magneticFieldEvents {
+  if (_magneticFieldEvents == null) {
+    _magneticFieldEvents = _magneticFieldEventChannel
+        .receiveBroadcastStream()
+        .map(
+            (dynamic event) => _listToMagneticFieldEvent(event.cast<double>()));
+  }
+  return _magneticFieldEvents;
+}
+
+/// A broadcast stream of events from the device ambient_temperature.
+Stream<AmbientTemperatureEvent> get ambientTemperatureEvents {
+  if (_ambientTemperatureEvents == null) {
+    _ambientTemperatureEvents = _ambientTemperatureEventChannel
+        .receiveBroadcastStream()
+        .map((dynamic event) =>
+            _listToAmbientTemperatureEvent(event.cast<double>()));
+  }
+  return _ambientTemperatureEvents;
+}
+
+//TODO: implement ios sensors

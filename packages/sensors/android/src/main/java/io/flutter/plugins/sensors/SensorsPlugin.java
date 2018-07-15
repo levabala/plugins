@@ -14,28 +14,29 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** SensorsPlugin */
 public class SensorsPlugin implements EventChannel.StreamHandler {
-  private static final String ACCELEROMETER_CHANNEL_NAME =
-      "plugins.flutter.io/sensors/accelerometer";
+  private static final String ACCELEROMETER_CHANNEL_NAME = "plugins.flutter.io/sensors/accelerometer";
   private static final String GYROSCOPE_CHANNEL_NAME = "plugins.flutter.io/sensors/gyroscope";
-  private static final String USER_ACCELEROMETER_CHANNEL_NAME =
-      "plugins.flutter.io/sensors/user_accel";
+  private static final String USER_ACCELEROMETER_CHANNEL_NAME = "plugins.flutter.io/sensors/user_accel";
+  private static final String MAGNETIC_FIELD_CHANNEL_NAME = "plugins.flutter.io/sensors/magnetic_field";
+  private static final String AMBIENT_TEMPERATURE_CHANNEL_NAME = "plugins.flutter.io/sensors/ambient_temperature";
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
-    final EventChannel accelerometerChannel =
-        new EventChannel(registrar.messenger(), ACCELEROMETER_CHANNEL_NAME);
-    accelerometerChannel.setStreamHandler(
-        new SensorsPlugin(registrar.context(), Sensor.TYPE_ACCELEROMETER));
+    final EventChannel accelerometerChannel = new EventChannel(registrar.messenger(), ACCELEROMETER_CHANNEL_NAME);
+    accelerometerChannel.setStreamHandler(new SensorsPlugin(registrar.context(), Sensor.TYPE_ACCELEROMETER));
 
-    final EventChannel userAccelChannel =
-        new EventChannel(registrar.messenger(), USER_ACCELEROMETER_CHANNEL_NAME);
-    userAccelChannel.setStreamHandler(
-        new SensorsPlugin(registrar.context(), Sensor.TYPE_LINEAR_ACCELERATION));
+    final EventChannel userAccelChannel = new EventChannel(registrar.messenger(), USER_ACCELEROMETER_CHANNEL_NAME);
+    userAccelChannel.setStreamHandler(new SensorsPlugin(registrar.context(), Sensor.TYPE_LINEAR_ACCELERATION));
 
-    final EventChannel gyroscopeChannel =
-        new EventChannel(registrar.messenger(), GYROSCOPE_CHANNEL_NAME);
-    gyroscopeChannel.setStreamHandler(
-        new SensorsPlugin(registrar.context(), Sensor.TYPE_GYROSCOPE));
+    final EventChannel gyroscopeChannel = new EventChannel(registrar.messenger(), GYROSCOPE_CHANNEL_NAME);
+    gyroscopeChannel.setStreamHandler(new SensorsPlugin(registrar.context(), Sensor.TYPE_GYROSCOPE));
+
+    final EventChannel magneticFieldChannel = new EventChannel(registrar.messenger(), MAGNETIC_FIELD_CHANNEL_NAME);
+    magneticFieldChannel.setStreamHandler(new SensorsPlugin(registrar.context(), Sensor.TYPE_MAGNETIC_FIELD));
+
+    final EventChannel ambientTemperatureChannel = new EventChannel(registrar.messenger(),
+        AMBIENT_TEMPERATURE_CHANNEL_NAME);
+    ambientTemperatureChannel.setStreamHandler(new SensorsPlugin(registrar.context(), Sensor.TYPE_AMBIENT_TEMPERATURE));
   }
 
   private SensorEventListener sensorEventListener;
@@ -61,7 +62,8 @@ public class SensorsPlugin implements EventChannel.StreamHandler {
   SensorEventListener createSensorEventListener(final EventChannel.EventSink events) {
     return new SensorEventListener() {
       @Override
-      public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+      public void onAccuracyChanged(Sensor sensor, int accuracy) {
+      }
 
       @Override
       public void onSensorChanged(SensorEvent event) {

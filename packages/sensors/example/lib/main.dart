@@ -138,5 +138,17 @@ class _MyHomePageState extends State<MyHomePage> {
         _userAccelerometerValues = <double>[event.x, event.y, event.z];
       });
     }));
+    _streamSubscriptions
+        .add(magneticFieldEvents.listen((MagneticFieldEvent event) {
+      setState(() {
+        print("Magnetic field event: ${event.toString()}");
+      });
+    }));
+    _streamSubscriptions
+        .add(ambientTemperatureEvents.listen((AmbientTemperatureEvent event) {
+      setState(() {
+        print("Temp event: ${event.toString()}");
+      });
+    }));
   }
 }
